@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Users, MapPin, Calendar, Filter } from 'lucide-react';
+import { Search, Users, MapPin, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import client from '../api/client';
 import Navbar from '../components/Navbar';
 import { Link } from 'react-router-dom';
 
-const SearchPage = () => {
+const SearchPage = ({ user }) => {
   const [q, setQ] = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: ['search', q],
     queryFn: async () => {
       if (!q) return { data: [] };
-      const res = await client.get('/api/profiles/search', { params: { q } });
+      const res = await client.get('/api/v1/profiles/search', { params: { q } });
       return res.data;
     },
     enabled: q.length > 2
   });
-
-  const user = { username: "Admin", role: "ADMIN" };
 
   return (
     <div className="min-h-screen bg-slate-50">

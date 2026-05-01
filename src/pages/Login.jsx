@@ -1,10 +1,36 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Github, ShieldCheck } from 'lucide-react';
+import { API_BASE } from '../api/client';
+
+function base64UrlEncode(bytes) {
+  let binary = '';
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
 
 const Login = () => {
-  const handleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/github';
+  const handleLogin = async () => {
+    const verifierBytes = new Uint8Array(32);
+    window.crypto.getRandomValues(verifierBytes);
+    const verifier = base64UrlEncode(verifierBytes);
+    const challengeBuffer = await window.crypto.subtle.digest(
+      'SHA-256',
+      new TextEncoder().encode(verifier)
+    );
+    const challenge = base64UrlEncode(new Uint8Array(challengeBuffer));
+    const state = crypto.randomUUID();
+    const redirectUri = `${window.location.origin}/auth/callback`;
+
+    sessionStorage.setItem('insighta_pkce_verifier', verifier);
+    sessionStorage.setItem('insighta_oauth_state', state);
+
+    window.location.href =
+      `${API_BASE}/auth/github?code_challenge=${encodeURIComponent(challenge)}` +
+      `&state=${encodeURIComponent(state)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   return (

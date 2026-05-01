@@ -1,17 +1,9 @@
 import React from 'react';
-import { User, Shield, LogOut, Key, Globe, Terminal } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Shield, LogOut, Key, Terminal } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import client from '../api/client';
 
-const AccountPage = () => {
-  const user = { 
-    username: "Admin", 
-    role: "ADMIN", 
-    email: "admin@insighta.labs",
-    avatar_url: "https://github.com/identicons/admin.png"
-  };
-
+const AccountPage = ({ user }) => {
   const handleLogout = async () => {
     await client.post('/auth/logout');
     window.location.href = '/login';
@@ -36,7 +28,8 @@ const AccountPage = () => {
                   </div>
                 </div>
                 <h2 className="text-xl font-bold text-slate-800">@{user.username}</h2>
-                <p className="text-sm text-slate-400 mb-6">{user.role}</p>
+                <p className="text-sm text-slate-400 mb-2">{user.role}</p>
+                {user.email ? <p className="text-xs text-slate-400 mb-6">{user.email}</p> : null}
                 <button onClick={handleLogout} className="btn btn-error btn-outline btn-block rounded-xl gap-2">
                   <LogOut className="w-4 h-4" /> Sign Out
                 </button>

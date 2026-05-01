@@ -6,19 +6,17 @@ import { motion } from 'framer-motion';
 import client from '../api/client';
 import Navbar from '../components/Navbar';
 
-const ProfileDetail = () => {
+const ProfileDetail = ({ user }) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', id],
     queryFn: async () => {
-      const res = await client.get(`/api/profiles/${id}`);
+      const res = await client.get(`/api/v1/profiles/${id}`);
       return res.data.data;
     }
   });
-
-  const user = { username: "Admin", role: "ADMIN" };
 
   if (isLoading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
 

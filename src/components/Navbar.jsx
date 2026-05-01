@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut, User, LayoutDashboard, Database, Search, UserCircle } from 'lucide-react';
+import { LogOut, LayoutDashboard, Database, Search, UserCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import client from '../api/client';
 
