@@ -1,28 +1,34 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Download, Trash2, Filter, Users, MapPin, Calendar } from 'lucide-react';
+import { Search, Download, Trash2, Users, MapPin, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import client from '../api/client';
 import Navbar from '../components/Navbar';
 
-const Dashboard = () => {
+const Dashboard = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
 
-  // Fetch Profiles
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['profiles', searchQuery],
     queryFn: async () => {
-      const endpoint = searchQuery ? '/profiles/search' : '/profiles';
+      const endpoint = searchQuery ? '/api/v1/profiles/search' : '/api/v1/profiles';
       const params = searchQuery ? { q: searchQuery } : { page: 1, limit: 20 };
       const res = await client.get(endpoint, { params });
       return res.data;
     }
   });
 
-  const handleExport = () => {
-    window.location.href = 'http://localhost:3000/api/v1/profiles/export';
+  const handleExport = async () => {
+    const response = await client.get('/api/v1/profiles/export', { responseType: 'blob' });
+    const href = URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = `profiles_${Date.now()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(href);
   };
 
   const handleDelete = async (id) => {
@@ -31,9 +37,6 @@ const Dashboard = () => {
       refetch();
     }
   };
-
-  // User mock - in real app, fetch from /auth/me or use context
-  const user = { username: "Admin", role: "ADMIN" };
 
   return (
     <div className="min-h-screen bg-slate-50">

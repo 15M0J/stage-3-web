@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -11,5 +12,5 @@ export default {
   daisyui: {
     themes: ["light", "dark", "cupcake"],
   },
-}
+};
 
